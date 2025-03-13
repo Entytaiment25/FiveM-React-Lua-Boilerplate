@@ -145,7 +145,7 @@ in the gamescripts.
 // First argument is the callback event name. 
 fetchNui<ReturnData>('getClientData').then(retData => {
   console.log('Got return data from client scripts:')
-  console.dir(retData)
+  console.log(JSON.stringify(retData, null, 2));
   setClientData(retData)
 }).catch(e => {
   console.error('Setting mock data due to error', e)
