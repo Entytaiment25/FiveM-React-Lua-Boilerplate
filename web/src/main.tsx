@@ -11,6 +11,6 @@ if (rootElement) {
 			<VisibilityProvider>
 				<App />
 			</VisibilityProvider>
-		</React.StrictMode>,
+		</React.StrictMode>
 	);
 }
