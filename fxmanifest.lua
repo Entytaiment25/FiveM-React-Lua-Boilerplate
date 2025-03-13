@@ -4,11 +4,11 @@ use_experimental_fxv2_oal 'yes'
 lua54 'yes'
 node_version '22'
 
-name 'fivem-react-boilerplate-lua'
-author "Project Error"
-version '1.0.0'
-repository 'https://github.com/project-error/fivem-react-boilerplate-lua'
-description "Basic React (TypeScript) & Lua Game Scripts Boilerplate"
+name 'FiveM-React-Lua-Boilerplate'
+author "Entytaiment25, Project Error"
+version '1.0.1'
+repository 'https://github.com/Entytaiment25/FiveM-React-Lua-Boilerplate'
+description "A basic boilerplate for FiveM using Lua 5.4 and React 19 (TypeScript), integrated with Biome.js, Shadcn, Tailwind CSS v4, and Node.js 22. "
 
 dependencies {
   '/server:12913',
