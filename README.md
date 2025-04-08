@@ -1,6 +1,6 @@
 # FiveM-React-Lua-Boilerplate
 
-## WILL FULLY WORK WHEN CFX DECIDES TO CHROME EMBEDDED FRAMEWORK (CEF)
+## WILL FULLY WORK WHEN CFX DECIDES TO UPDATE CHROME EMBEDDED FRAMEWORK (CEF)
 - for now a downgrade of Tailwind is needed to v3 and shadcn to its twv3 version.
 
 <div align="center">
