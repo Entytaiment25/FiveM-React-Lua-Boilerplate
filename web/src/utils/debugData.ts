@@ -13,18 +13,18 @@ interface DebugEvent<T = unknown> {
  * @param timer - How long until it should trigger (ms)
  */
 export const debugData = <P>(events: DebugEvent<P>[], timer = 1000): void => {
-	if (import.meta.env.MODE === "development" && isEnvBrowser()) {
+	if (!import.meta.env.DEV || !isEnvBrowser() || events.length === 0) return;
+
+	setTimeout(() => {
 		for (const event of events) {
-			setTimeout(() => {
-				window.dispatchEvent(
-					new MessageEvent("message", {
-						data: {
-							action: event.action,
-							data: event.data,
-						},
-					}),
-				);
-			}, timer);
+			window.dispatchEvent(
+				new MessageEvent("message", {
+					data: {
+						action: event.action,
+						data: event.data,
+					},
+				}),
+			);
 		}
-	}
+	}, timer);
 };

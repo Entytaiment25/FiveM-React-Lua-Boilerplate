@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { VisibilityProvider } from "./providers/VisibilityProvider";
 import App from "./components/App";
+import { VisibilityProvider } from "./providers/VisibilityProvider";
 import "./index.css";
 
 const rootElement = document.getElementById("root");
@@ -11,6 +11,6 @@ if (rootElement) {
 			<VisibilityProvider>
 				<App />
 			</VisibilityProvider>
-		</React.StrictMode>
+		</React.StrictMode>,
 	);
 }

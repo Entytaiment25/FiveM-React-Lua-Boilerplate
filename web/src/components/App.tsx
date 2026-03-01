@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import "./App.css";
 import { debugData } from "../utils/debugData";
 import { fetchNui } from "../utils/fetchNui";
@@ -7,26 +7,28 @@ import { Button } from "./ui/button";
 
 // This will set the NUI to visible if we are
 // developing in browser
-debugData([
-	{
-		action: "setVisible",
-		data: true,
-	},
-]);
+if (import.meta.env.DEV) {
+	debugData([
+		{
+			action: "setVisible",
+			data: true,
+		},
+	]);
+}
 
 interface ReturnClientDataCompProps {
 	data: unknown;
 }
 
-const ReturnClientDataComp: React.FC<ReturnClientDataCompProps> = ({
-	data,
-}) => (
-	<>
-		<h5>Returned Data:</h5>
-		<pre>
-			<code>{JSON.stringify(data, null)}</code>
-		</pre>
-	</>
+const ReturnClientDataComp: React.FC<ReturnClientDataCompProps> = memo(
+	({ data }) => (
+		<>
+			<h5>Returned Data:</h5>
+			<pre>
+				<code>{JSON.stringify(data, null, 2)}</code>
+			</pre>
+		</>
+	),
 );
 
 interface ReturnData {
@@ -38,18 +40,20 @@ interface ReturnData {
 const App: React.FC = () => {
 	const [clientData, setClientData] = useState<ReturnData | null>(null);
 
-	const handleGetClientData = () => {
+	const handleGetClientData = useCallback(() => {
 		fetchNui<ReturnData>("getClientData")
 			.then((retData) => {
-				console.log("Got return data from client scripts:");
-				console.log(JSON.stringify(retData, null, 2));
+				if (import.meta.env.DEV) {
+					console.log("Got return data from client scripts:");
+					console.log(JSON.stringify(retData, null, 2));
+				}
 				setClientData(retData);
 			})
 			.catch((e) => {
 				console.error("Setting mock data due to error", e);
 				setClientData({ x: 500, y: 300, z: 200 });
 			});
-	};
+	}, []);
 
 	return (
 		<div className="nui-wrapper">

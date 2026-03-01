@@ -4,6 +4,7 @@ import {
 	createContext,
 	useContext,
 	useEffect,
+	useMemo,
 	useState,
 } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
@@ -17,12 +18,23 @@ interface VisibilityProviderValue {
 	visible: boolean;
 }
 
+const VISIBLE_STYLE: React.CSSProperties = {
+	visibility: "visible",
+	height: "100%",
+};
+
+const HIDDEN_STYLE: React.CSSProperties = {
+	visibility: "hidden",
+	height: "100%",
+};
+
 // This should be mounted at the top level of your application, it is currently set to
 // apply a CSS visibility value. If this is non-performant, this should be customized.
 export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [visible, setVisible] = useState(false);
+	const contextValue = useMemo(() => ({ visible, setVisible }), [visible]);
 
 	useNuiEvent<boolean>("setVisible", setVisible);
 
@@ -32,9 +44,9 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (!visible) return;
 
 		const keyHandler = (e: KeyboardEvent) => {
-			if (["Backspace", "Escape"].includes(e.code)) {
+			if (e.code === "Backspace" || e.code === "Escape") {
 				if (!isEnvBrowser()) fetchNui("hideFrame");
-				else setVisible(!visible);
+				else setVisible(false);
 			}
 		};
 
@@ -44,15 +56,8 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
 	}, [visible]);
 
 	return (
-		<VisibilityCtx.Provider
-			value={{
-				visible,
-				setVisible,
-			}}
-		>
-			<div
-				style={{ visibility: visible ? "visible" : "hidden", height: "100%" }}
-			>
+		<VisibilityCtx.Provider value={contextValue}>
+			<div style={visible ? VISIBLE_STYLE : HIDDEN_STYLE}>
 				{children}
 			</div>
 		</VisibilityCtx.Provider>

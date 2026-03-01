@@ -1,5 +1,35 @@
 import { isEnvBrowser } from "./misc";
 
+const FETCH_HEADERS = {
+	"Content-Type": "application/json; charset=UTF-8",
+};
+
+const isBrowserEnv = isEnvBrowser();
+
+let cachedResourceName: string | null = null;
+let cachedBaseUrl: string | null = null;
+
+interface WindowWithResourceName extends Window {
+	GetParentResourceName?: () => string;
+}
+
+const getResourceName = (): string => {
+	if (cachedResourceName) return cachedResourceName;
+
+	const resourceName = (window as WindowWithResourceName).GetParentResourceName
+		? (window as WindowWithResourceName).GetParentResourceName?.()
+		: "nui-frame-app";
+
+	cachedResourceName = resourceName ?? "nui-frame-app";
+	return cachedResourceName;
+};
+
+const getBaseUrl = (): string => {
+	if (cachedBaseUrl) return cachedBaseUrl;
+	cachedBaseUrl = `https://${getResourceName()}`;
+	return cachedBaseUrl;
+};
+
 /**
  * Simple wrapper around fetch API tailored for CEF/NUI use. This abstraction
  * can be extended to include AbortController if needed or if the response isn't
@@ -17,25 +47,15 @@ export async function fetchNui<T = unknown>(
 	data?: unknown,
 	mockData?: T,
 ): Promise<T> {
-	const options = {
+	if (isBrowserEnv && mockData !== undefined) return mockData;
+
+	const body = data === undefined ? undefined : JSON.stringify(data);
+
+	const resp = await fetch(`${getBaseUrl()}/${eventName}`, {
 		method: "post",
-		headers: {
-			"Content-Type": "application/json; charset=UTF-8",
-		},
-		body: JSON.stringify(data),
-	};
-
-	if (isEnvBrowser() && mockData) return mockData;
-
-	interface WindowWithResourceName extends Window {
-		GetParentResourceName?: () => string;
-	}
-
-	const resourceName = (window as WindowWithResourceName).GetParentResourceName
-		? (window as WindowWithResourceName).GetParentResourceName?.()
-		: "nui-frame-app";
-
-	const resp = await fetch(`https://${resourceName}/${eventName}`, options);
+		headers: FETCH_HEADERS,
+		body,
+	});
 
 	const respFormatted = await resp.json();
 
